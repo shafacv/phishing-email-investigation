@@ -1,710 +1,410 @@
-# phishing-email-investigation
-A cybersecurity project focused on analyzing phishing emails, investigating email headers, identifying malicious URLs and attachments, extracting IOCs, and documenting phishing indicators using SOC analysis techniques.
+# 📧 Email Phishing / Business Email Compromise Investigation
 
 ## 📌 Project Overview
 
-This project focuses on the analysis of suspicious and potentially malicious phishing emails from a cybersecurity/SOC analyst perspective.
+This project demonstrates a **SOC Analyst investigation of a suspicious email** suspected to be a **Business Email Compromise (BEC) / Executive Impersonation** attempt.
 
-The objective is to investigate an email, identify indicators of compromise (IOCs), determine whether the email is legitimate or malicious, and document the findings.
+The email impersonates a Chief Executive Officer and requests an urgent **INR 18,75,000 wire transfer**. The investigation focuses on analyzing the email headers, sender information, authentication results, suspicious URL, network indicators, and social-engineering characteristics.
 
-The investigation includes:
-
-* Email header analysis
-* Sender and recipient analysis
-* SPF, DKIM, and DMARC verification
-* Suspicious URL analysis
-* Attachment analysis
-* Domain and IP investigation
-* IOC extraction
-* Social-engineering technique identification
-* Risk assessment
-* Incident-response recommendations
+The objective is to follow a practical SOC investigation workflow and document the findings, Indicators of Compromise (IOCs), and recommended response actions.
 
 ---
 
 ## 🎯 Objectives
 
-The main objectives of this project are:
-
-1. Identify phishing characteristics in an email.
-2. Analyze email headers to determine the actual source of the message.
-3. Investigate suspicious domains, URLs, and IP addresses.
-4. Identify malicious or suspicious attachments.
-5. Extract Indicators of Compromise (IOCs).
-6. Determine the phishing techniques used by the attacker.
-7. Assess the potential impact on the organization.
-8. Provide recommendations for preventing similar attacks.
+* Analyze a suspicious `.eml` file
+* Investigate email headers
+* Analyze sender and recipient information
+* Examine SPF, DKIM, and DMARC results
+* Identify suspicious domains and IP addresses
+* Extract and investigate URLs
+* Identify Indicators of Compromise (IOCs)
+* Determine the likely attack type
+* Document investigation findings
+* Recommend incident-response actions
 
 ---
 
 ## 🛠️ Tools Used
 
-| Tool                  | Purpose                                      |
-| --------------------- | -------------------------------------------- |
-| Email Header Analyzer | Analyze email routing and authentication     |
-| VirusTotal            | Investigate URLs, domains, files, and hashes |
-| URLScan.io            | Analyze suspicious URLs                      |
-| WHOIS                 | Investigate domain registration information  |
-| AbuseIPDB             | Check IP reputation                          |
-| CyberChef             | Decode and analyze suspicious data           |
-| MXToolbox             | Check email and DNS information              |
-| Any.Run               | Sandbox analysis of suspicious files/URLs    |
-| Wireshark             | Network traffic analysis                     |
-| Splunk                | Log analysis and correlation                 |
-
-> Only use authorized or safe samples for analysis. Do not open suspicious attachments or URLs directly on your normal computer.
+| Tool                  | Purpose                                          |
+| --------------------- | ------------------------------------------------ |
+| Email Header Analysis | Analyze email routing and authentication headers |
+| VirusTotal            | URL/domain/IP reputation investigation           |
+| URLScan               | URL and web infrastructure analysis              |
+| WHOIS                 | Domain registration investigation                |
+| CyberChef             | Decode and analyze encoded data                  |
+| MITRE ATT&CK          | Map observed techniques                          |
+| GitHub                | Investigation documentation                      |
 
 ---
 
-# 📁 Project Structure
+## 📂 Project Structure
 
 ```text
-phishing-email-analysis/
+Email-Phishing-Investigation/
 │
 ├── README.md
 │
-├── samples/
-│   └── sample-email.txt
+├── evidence/
+│   ├── phishing-email.eml
+│   └── screenshots/
+│       ├── 01-email.png
+│       ├── 02-headers.png
+│       ├── 03-authentication.png
+│       ├── 04-url-analysis.png
+│       ├── 05-ip-analysis.png
+│       ├── 06-domain-analysis.png
+│       └── 07-cyberchef.png
 │
-├── analysis/
-│   ├── email-header-analysis.md
+├── investigation/
+│   ├── email-analysis.md
+│   ├── header-analysis.md
 │   ├── url-analysis.md
-│   ├── attachment-analysis.md
-│   └── phishing-investigation.md
+│   └── ioc-list.md
 │
-├── iocs/
-│   └── iocs.csv
-│
-├── screenshots/
-│   ├── header-analysis.png
-│   ├── url-analysis.png
-│   └── reputation-check.png
-│
-└── reports/
-    └── phishing-analysis-report.pdf
+└── report/
+    └── incident-report.md
 ```
 
 ---
 
-# 🔎 Investigation Methodology
+# 🔎 Investigation
 
-## 1. Collect the Email
+## 1. Email Details
 
-The first step is to obtain the suspicious email in a safe format.
+| Field        | Value                                            |
+| ------------ | ------------------------------------------------ |
+| Sender Name  | Rajiv Mehra, CEO                                 |
+| Sender Email | `rajiv.mehra@citiprepaid-salarysea-at.tk`        |
+| Recipient    | Priya Sharma                                     |
+| Subject      | `Confidential: Urgent payment approval required` |
+| Date         | 23 July 2026 11:48 UTC                           |
+| Sending IP   | `98.177.68.12`                                   |
+| Reply-To     | `rajiv.mehra@citiprepaid-salarysea-at.tk`        |
+| Return-Path  | `rajiv.mehra@citiprepaid-salarysea-at.tk`        |
 
-Recommended formats:
+---
 
-* `.eml`
-* `.msg`
-* Raw email headers
-* Plain-text email
+## 2. Sender Analysis
 
-Important information to collect:
+The email claims to be from:
+
+**Rajiv Mehra — Chief Executive Officer**
+
+and the signature identifies:
+
+**Northstar Holdings**
+
+However, the sender uses:
+
+```text
+citiprepaid-salarysea-at.tk
+```
+
+The sender domain does not correspond to the organization claimed in the email signature.
+
+The `Reply-To`, `Return-Path`, and `Message-ID` also use the same domain.
+
+### Finding
+
+**Potential executive impersonation / Business Email Compromise.**
+
+---
+
+## 3. Email Header Analysis
+
+The email originated from:
+
+```text
+mail.citiprepaid-salarysea-at.tk
+```
+
+with the IP address:
+
+```text
+98.177.68.12
+```
+
+The message was subsequently processed through Microsoft email infrastructure.
+
+### Important Headers
 
 ```text
 From:
-To:
-Subject:
-Date:
+rajiv.mehra@citiprepaid-salarysea-at.tk
+
 Reply-To:
+rajiv.mehra@citiprepaid-salarysea-at.tk
+
 Return-Path:
-Message-ID:
-Received:
-Authentication-Results:
+rajiv.mehra@citiprepaid-salarysea-at.tk
+
+X-Originating-IP:
+98.177.68.12
+
+X-Sender-IP:
+98.177.68.12
 ```
 
 ---
 
-# 2. Analyze the Email Header
+## 4. SPF / DKIM / DMARC Analysis
 
-Email headers contain information about how an email traveled between mail servers.
+The email authentication results were:
 
-Important fields include:
+| Authentication | Result |
+| -------------- | ------ |
+| SPF            | PASS   |
+| DKIM           | NONE   |
+| DMARC          | PASS   |
 
-### From
+### Assessment
 
-Shows the displayed sender address.
+SPF and DMARC passing do **not independently prove that the sender is the legitimate person represented in the email**.
 
-Example:
+The sender domain remains suspicious because it does not correspond to the organization claimed in the email.
 
-```text
-From: Microsoft Security <security@example.com>
-```
-
-The displayed sender should not automatically be trusted because attackers can spoof the visible address.
-
----
-
-### Reply-To
-
-Check whether replies are redirected to a different address.
-
-Example:
-
-```text
-From: security@example.com
-Reply-To: attacker@example.net
-```
-
-This can be a suspicious indicator.
+Authentication results were therefore considered together with the sender identity, domain, email content, and requested financial action.
 
 ---
 
-### Return-Path
+## 5. Subject Analysis
 
-The Return-Path can provide additional information about the actual sending infrastructure.
-
-Example:
+### Subject
 
 ```text
-Return-Path: <mailer@suspicious-domain.com>
+Confidential: Urgent payment approval required
 ```
+
+The subject contains several social-engineering characteristics:
+
+* Urgency
+* Confidentiality
+* Financial request
+* Pressure to act quickly
+
+These characteristics warranted further investigation.
 
 ---
 
-### Received Headers
+## 6. Email Body Analysis
 
-`Received` headers show the path taken by the email through mail servers.
-
-Example:
+The email requests:
 
 ```text
-Received: from mail.example.net
-        by mail.company.com
+INR 18,75,000
 ```
 
-These headers can help identify:
+to be transferred to a new consulting partner.
 
-* Sending IP address
-* Mail servers
-* Routing path
-* Potentially suspicious infrastructure
+The message also specifies a deadline:
+
+```text
+Before 4:00 PM
+```
+
+The sender claims to be in a confidential meeting and unable to take calls.
+
+The recipient is instructed:
+
+```text
+Do not discuss this request with anyone
+```
+
+The recipient is also asked to reply after the transfer has been submitted.
+
+### Suspicious Characteristics
+
+* Large financial request
+* Urgent deadline
+* Executive impersonation
+* Request for secrecy
+* Claim that the sender cannot take calls
+* External payment-instruction URL
 
 ---
 
-# 3. Check SPF
+# 🌐 URL Investigation
 
-SPF stands for:
-
-**Sender Policy Framework**
-
-SPF helps determine whether a server is authorized to send email for a domain.
-
-Example:
+The email contains the following URL:
 
 ```text
-spf=pass
+http://adventure-nicaragua.net/index.php?option=com_mailto&tmpl=component&link=aHR0cDovL2FkdmVudHVyZ.
 ```
 
-or
+The URL is presented as:
 
 ```text
-spf=fail
+Review Payment Instructions
 ```
 
-A failed SPF result can be a strong warning sign, although it does not by itself prove that an email is malicious.
+The domain does not obviously correspond to the organization represented in the email.
 
----
+### Safety
 
-# 4. Check DKIM
+The URL should be investigated using security-analysis tools rather than directly opened in a normal browser.
 
-DKIM stands for:
-
-**DomainKeys Identified Mail**
-
-DKIM uses cryptographic signatures to help verify that an email was authorized by the sending domain and was not modified after signing.
-
-Example:
-
-```text
-dkim=pass
-```
-
-or
-
-```text
-dkim=fail
-```
-
----
-
-# 5. Check DMARC
-
-DMARC stands for:
-
-**Domain-based Message Authentication, Reporting and Conformance**
-
-DMARC combines domain alignment with SPF and DKIM results.
-
-Example:
-
-```text
-dmarc=pass
-```
-
-or:
-
-```text
-dmarc=fail
-```
-
-Authentication failures should be investigated together with other evidence rather than treated as automatic proof of phishing.
-
----
-
-# 6. Analyze the Sender
-
-Investigate the sender address carefully.
-
-Example:
-
-```text
-security@micros0ft-support.example
-```
-
-Potential red flags:
-
-* Look-alike domains
-* Misspelled company names
-* Unexpected domains
-* Free email providers
-* Suspicious subdomains
-* Mismatched sender and Reply-To addresses
-
-Example:
-
-```text
-legitimate-domain.com
-```
-
-versus:
-
-```text
-legitmate-domain.com
-```
-
-The difference may be only one character.
-
-Humans are remarkably good at not noticing one character when money or panic is involved.
-
----
-
-# 7. Analyze the Subject
-
-Look for social-engineering indicators such as:
-
-```text
-URGENT: Your account will be disabled
-```
-
-```text
-Security Alert: Verify Your Account
-```
-
-```text
-Payment Failed - Immediate Action Required
-```
-
-Common phishing themes include:
-
-* Account suspension
-* Password expiration
-* Financial transactions
-* Package delivery
-* Payroll
-* IT support
-* MFA verification
-* Password reset
-* Tax or government notifications
-
----
-
-# 8. Analyze URLs
-
-Extract every URL contained in the email.
-
-Example:
-
-```text
-https://login-example-security.com/verify
-```
-
-Investigate:
-
-* Domain
-* Subdomain
-* URL path
-* Redirects
-* Domain age
-* Reputation
-* SSL certificate
-* Hosting information
-* URL reputation
-
-Useful tools include:
+### Tools
 
 * VirusTotal
-* URLScan.io
+* URLScan
 * WHOIS
-
-Do not visit suspicious URLs directly from your normal browser.
+* CyberChef
 
 ---
 
-# 9. Analyze Attachments
+# 🌐 URL / Domain Indicators
 
-Check whether the email contains attachments.
-
-Examples:
+### Sender Domain
 
 ```text
-Invoice.pdf
-Payment.xlsm
-Document.docm
-Security_Update.zip
+citiprepaid-salarysea-at[.]tk
 ```
 
-Look for suspicious characteristics:
-
-* Executable files
-* Macro-enabled Office documents
-* JavaScript files
-* ZIP archives
-* Password-protected archives
-* Double extensions
-
-Example:
+### URL Domain
 
 ```text
-Invoice.pdf.exe
+adventure-nicaragua[.]net
 ```
 
-The filename may attempt to disguise an executable file as a PDF.
-
-For suspicious files, calculate the SHA-256 hash:
-
-```bash
-sha256sum suspicious_file
-```
-
-Example:
+### Sending Host
 
 ```text
-SHA256:
-a1b2c3d4e5f6...
+mail.citiprepaid-salarysea-at[.]tk
 ```
 
-The hash can then be searched using malware-analysis services such as VirusTotal.
-
----
-
-# 10. Extract Indicators of Compromise
-
-Create an IOC list containing:
-
-| IOC Type | Value                                               | Description               |
-| -------- | --------------------------------------------------- | ------------------------- |
-| Email    | [attacker@example.com](mailto:attacker@example.com) | Suspicious sender         |
-| Domain   | suspicious-example.com                              | Phishing domain           |
-| URL      | https://suspicious-example.com/login                | Credential harvesting URL |
-| IP       | 203.0.113.10                                        | Suspicious infrastructure |
-| SHA-256  | `<hash>`                                            | Attachment hash           |
-
-Store the information in:
+### Sending IP
 
 ```text
-iocs/iocs.csv
+98[.]177[.]68[.]12
 ```
 
-Example:
-
-```csv
-type,value,description
-email,attacker@example.com,Suspicious sender
-domain,suspicious-example.com,Phishing domain
-url,https://suspicious-example.com/login,Credential harvesting URL
-ip,203.0.113.10,Suspicious IP
-sha256,<hash>,Suspicious attachment
-```
+Indicators are defanged to reduce the risk of accidental interaction.
 
 ---
 
-# 11. Identify Phishing Techniques
+# 🔐 IOC Table
 
-Possible techniques include:
-
-### Credential Harvesting
-
-The attacker attempts to obtain:
-
-* Username
-* Password
-* MFA code
-* Banking credentials
-
-### Spoofing
-
-The attacker impersonates a trusted organization or person.
-
-### Urgency
-
-The victim is pressured to act immediately.
-
-Example:
-
-```text
-Your account will be permanently disabled today.
-```
-
-### Fear
-
-The email attempts to create panic.
-
-Example:
-
-```text
-Unauthorized login detected.
-Verify your account immediately.
-```
-
-### Brand Impersonation
-
-The attacker imitates companies such as:
-
-* Microsoft
-* Google
-* Apple
-* Banks
-* Delivery companies
-* Cloud providers
+| IOC Type | Indicator                                   | Description             |
+| -------- | ------------------------------------------- | ----------------------- |
+| Email    | `rajiv.mehra@citiprepaid-salarysea-at[.]tk` | Claimed CEO sender      |
+| Domain   | `citiprepaid-salarysea-at[.]tk`             | Sender domain           |
+| IP       | `98[.]177[.]68[.]12`                        | Sending IP              |
+| Hostname | `mail.citiprepaid-salarysea-at[.]tk`        | Sending hostname        |
+| Domain   | `adventure-nicaragua[.]net`                 | Payment URL domain      |
+| URL      | `hxxp://adventure-nicaragua[.]net/...`      | Payment-instruction URL |
 
 ---
 
-# 12. Determine the Verdict
+# 🕒 Investigation Timeline
 
-After collecting evidence, classify the email.
-
-Possible verdicts:
-
-```text
-Benign
-Suspicious
-Phishing
-Malware
-Business Email Compromise
-Spam
-```
-
-Example:
-
-```text
-Verdict: Phishing
-
-Confidence: High
-
-Reason:
-
-1. Sender domain does not match the claimed organization.
-2. SPF authentication failed.
-3. Reply-To address points to another domain.
-4. Email contains a suspicious login URL.
-5. URL reputation indicates malicious activity.
-6. Email uses urgency and account-suspension themes.
-```
+| Time         | Event                                                 |
+| ------------ | ----------------------------------------------------- |
+| 11:48:18 UTC | Email generated                                       |
+| 11:48:22 UTC | Email received by Microsoft protection infrastructure |
+| 11:48:23 UTC | Email processed through Microsoft frontend transport  |
+| 11:48:24 UTC | Message processed by mailbox infrastructure           |
+| 11:48:25 UTC | Message processing completed                          |
 
 ---
 
-# 13. Risk Assessment
+# ⚠️ Attack Classification
 
-Assess the potential impact.
+## Potential Business Email Compromise (BEC)
 
-### Potential Impact
+### Category
 
-* Credential theft
-* Account compromise
-* Malware infection
-* Data theft
-* Financial fraud
-* Business Email Compromise
-* Lateral movement
-* Unauthorized access
+**Executive Impersonation / Financial Fraud Attempt**
 
-Example:
+The primary objective indicated by the email is to convince the recipient to make a financial transfer.
 
-```text
-Risk Level: High
-
-Potential Impact:
-Credential theft and account compromise.
-
-Primary Attack Vector:
-Malicious phishing URL.
-
-Affected Users:
-Employees receiving the email.
-
-Recommended Action:
-Block the malicious domain and URL, search mailboxes
-for similar messages, reset credentials for affected users,
-and monitor authentication logs.
-```
+The email does not primarily request a password or other credentials. Instead, it attempts to influence the recipient into performing a financial transaction.
 
 ---
 
-# 14. Incident Response Recommendations
+# 🧩 MITRE ATT&CK Mapping
 
-If the email is confirmed as malicious:
+Potentially relevant technique:
 
-### Immediate Actions
+### T1566.002 — Phishing: Spearphishing Link
 
-1. Quarantine the email.
-2. Block malicious domains and URLs.
-3. Block identified malicious IP addresses where appropriate.
-4. Search the organization for similar emails.
-5. Identify users who clicked the link.
-6. Reset compromised credentials.
-7. Revoke suspicious sessions/tokens.
-8. Scan affected systems.
-9. Monitor authentication activity.
-10. Document the incident.
+The email contains an external URL presented as payment instructions.
+
+Additional MITRE ATT&CK mappings should only be added when supported by investigation evidence.
 
 ---
 
-# 📊 Example Investigation Summary
+# 🚨 Recommended SOC Response
 
-```text
-=================================================
-             PHISHING EMAIL ANALYSIS
-=================================================
+## Immediate Actions
 
-Email Subject:
-Urgent: Your Account Requires Verification
+1. Do not initiate the requested wire transfer.
+2. Do not open the suspicious URL.
+3. Preserve the original `.eml` file and headers.
+4. Report the email to the SOC/security team.
+5. Quarantine the email.
 
-Sender:
-security@suspicious-example.com
+## Investigation
 
-Reply-To:
-support@another-example.com
+6. Search the mail environment for the sender domain.
+7. Search for the sending IP.
+8. Search for the suspicious URL/domain.
+9. Identify other recipients of the message.
+10. Determine whether any user clicked the URL.
+11. Determine whether any financial transaction was attempted.
 
-SPF:
-FAIL
+## Containment
 
-DKIM:
-FAIL
+12. Block confirmed malicious domains and URLs.
+13. Block confirmed malicious infrastructure where appropriate.
+14. Remove related phishing emails from affected mailboxes.
 
-DMARC:
-FAIL
+## Recovery
 
-Suspicious URL:
-https://suspicious-example.com/verify
-
-Attachment:
-None
-
-Social Engineering:
-Urgency + Account Suspension
-
-IOC Identified:
-Domain
-URL
-Email Address
-IP Address
-
-Verdict:
-PHISHING
-
-Risk:
-HIGH
-
-Primary Threat:
-Credential Theft
-=================================================
-```
+15. Contact the finance team if a transaction was attempted.
+16. Verify financial requests through an independent communication channel.
+17. Continue monitoring affected accounts and systems.
+18. Document the incident and update detection rules.
 
 ---
 
-# 📈 SOC Analyst Skills Demonstrated
+# 📝 Final Assessment
 
-This project demonstrates practical knowledge of:
+The investigated email contains multiple characteristics consistent with a **potential Business Email Compromise / executive impersonation attempt**.
 
-* Email security
-* Phishing detection
-* SOC investigation
-* IOC extraction
-* Threat intelligence
-* OSINT
-* Email authentication
-* SPF
-* DKIM
-* DMARC
-* URL analysis
-* Malware analysis
-* Incident response
-* Security documentation
+Key observations include:
+
+* Sender claims to be a CEO.
+* Sender domain does not correspond to the organization represented.
+* Email requests an INR 18,75,000 wire transfer.
+* Message creates urgency with a 4:00 PM deadline.
+* Recipient is instructed not to discuss the request.
+* Payment instructions are provided through an external domain.
+* Sending IP and domains can be extracted as investigation indicators.
+* SPF passed, DKIM was absent, and DMARC passed; these authentication results do not independently establish the legitimacy of the claimed identity.
 
 ---
 
-# 🔐 Safety
+# 📚 Skills Demonstrated
 
-Only analyze emails and files that you are authorized to investigate.
+This project demonstrates practical skills in:
 
-For suspicious URLs:
+* Email Header Analysis
+* Phishing Investigation
+* Business Email Compromise Analysis
+* Email Authentication Analysis
+* SPF / DKIM / DMARC
+* IOC Extraction
+* URL Investigation
+* Domain Investigation
+* IP Investigation
+* Threat Intelligence
+* Social Engineering Analysis
+* Incident Response
+* MITRE ATT&CK Mapping
+* Security Documentation
 
-```text
-DO NOT open them directly.
-```
-
-For suspicious attachments:
-
-```text
-DO NOT execute them on your personal system.
-```
-
-Use an isolated virtual machine or appropriate malware-analysis sandbox.
-
----
-
-# 📚 Learning Outcomes
-
-After completing this project, you should be able to:
-
-* Read and interpret email headers.
-* Identify suspicious sender information.
-* Understand SPF, DKIM, and DMARC.
-* Analyze phishing URLs.
-* Extract IOCs.
-* Investigate suspicious attachments.
-* Identify social-engineering techniques.
-* Assess phishing risk.
-* Produce a professional SOC investigation report.
 
 ---
 
-# 🚀 Future Improvements
-
-The project can be extended by adding:
-
-* Splunk integration
-* Wazuh integration
-* Automated IOC extraction
-* Python-based email parser
-* VirusTotal API integration
-* SIEM dashboards
-* Automated phishing detection
-* YARA rules for malicious attachments
-* MITRE ATT&CK mapping
-* Automated incident-response workflow
-
----
-
-## 👨‍💻 Author
-
-**Shafa CV**
-
-Cybersecurity / SOC Analyst Learning Project
-
----
-
-## 📌 Disclaimer
-
-This project is intended for cybersecurity education, defensive security analysis, and authorized laboratory environments only.
