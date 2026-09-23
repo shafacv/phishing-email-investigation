@@ -54,7 +54,9 @@ Email-Phishing-Investigation/
 │       ├── 04-url-analysis.png
 │       ├── 05-ip-analysis.png
 │       ├── 06-domain-analysis.png
-│       └── 07-cyberchef.png
+│       ├── 07-cyberchef.png
+        └── 08-.png
+        
 │
 ├── investigation/
 │   ├── email-analysis.md
