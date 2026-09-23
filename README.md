@@ -31,7 +31,6 @@ The objective is to follow a practical SOC investigation workflow and document t
 | --------------------- | ------------------------------------------------ |
 | Email Header Analysis | Analyze email routing and authentication headers |
 | VirusTotal            | URL/domain/IP reputation investigation           |
-| URLScan               | URL and web infrastructure analysis              |
 | WHOIS                 | Domain registration investigation                |
 | CyberChef             | Decode and analyze encoded data                  |
 | MITRE ATT&CK          | Map observed techniques                          |
