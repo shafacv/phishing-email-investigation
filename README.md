@@ -33,7 +33,6 @@ The objective is to follow a practical SOC investigation workflow and document t
 | VirusTotal            | URL/domain/IP reputation investigation           |
 | WHOIS                 | Domain registration investigation                |
 | CyberChef             | Decode and analyze encoded data                  |
-| MITRE ATT&CK          | Map observed techniques                          |
 | GitHub                | Investigation documentation                      |
 
 ---
@@ -55,7 +54,7 @@ Email-Phishing-Investigation/
 │       ├── 05-ip-analysis.png
 │       ├── 06-domain-analysis.png
 │       ├── 07-cyberchef.png
-        └── 08-.png
+        └── 08-abuseipdb.png
         
 │
 ├── investigation/
