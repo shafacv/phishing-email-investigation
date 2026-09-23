@@ -130,9 +130,8 @@ The following evidence was collected during the investigation:
 - `04-url-analysis.png` — VirusTotal URL analysis
 - `05-ip-analysis.png` — VirusTotal IP analysis
 - `06-domain-analysis.png` — VirusTotal domain analysis
-- `07-whois-lookup.png` — WHOIS information
-- `08-cyberchef.png` — Base64 decoding using CyberChef
-- `09-abuseipdb.png` — AbuseIPDB IP analysis
+- `07-cyberchef.png` — Base64 decoding using CyberChef
+- `08-abuseipdb.png` — AbuseIPDB IP analysis
 
 ## 11. Tools Used
 
